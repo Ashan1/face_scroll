@@ -1,0 +1,20 @@
+{
+  "name": "face_scroll",
+  "description": "",
+  "main": "index.html",
+  "authors": [
+    "Chamath Silva <mbckchamathsilva@gmail.com>"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/Ashan1/face_scroll",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.7"
+  }
+}

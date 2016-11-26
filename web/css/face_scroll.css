@@ -1,0 +1,28 @@
+html, body{
+    height:100%;
+}
+
+/*overrides*/
+.navbar{
+  margin-bottom: 0px;
+  height:6%;
+}
+
+/*end of overrides*/
+.main-container {
+  height:94%;
+}
+.top-container {
+    height: 80%;
+}
+
+.bottom-container {
+    height: 20%;
+}
+.top-container .row {
+    height: 100%;
+}
+.height-border {
+    text-align: center;
+    height: 100%;
+}
