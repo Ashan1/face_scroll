@@ -51,37 +51,23 @@
         <div class="col-xs-12 col-md-12 height-border" >
             <div class="row">
                 <div class="col-xs-4 height-border" style="background-color: yellow">
+
+                <div style="margin-top:5px;">
                     <canvas id="inputCanvas" width="320" height="240" style="display:none"></canvas>
                     <video id="inputVideo" autoplay loop></video>
-                    <script type="text/javascript">
-                        var videoInput = document.getElementById('inputVideo');
-                        var canvasInput = document.getElementById('inputCanvas');
-
-                        var htracker = new headtrackr.Tracker({calcAngles : true});
-                        htracker.init(videoInput, canvasInput);
-                        htracker.start();
-
-
-                        // video styling
-                        videoInput.style.position = 'absolute';
-                        videoInput.style.top = '50px';
-                        videoInput.style.zIndex = '100001';
-                        videoInput.style.display = 'block';
-
-                        document.addEventListener('facetrackingEvent',
-                                function (event) {
-
-                                }
-                        );
-                    </script>
-
+                </div>
+                    <div class="row" style="margin-top:5px">
+                      <button  class="btn btn-primary" id = "calibarate_btn" autocomplete="off" onclick="calibarate()" >
+                        Calibarate
+                      </button>
+                      <button  class="btn btn-primary" id = "save_btn"  autocomplete="off" onclick="save()" disabled>
+                        Save
+                      </button>
+                    </div>
                 </div>
                 <div class="col-xs-8 height-border" style="background-color: blue">FULL PDF
                   <!-- <iframe  src="img/test2.pdf" frameborder="0" scrolling="auto" height="95%" width="100%" ></iframe> -->
-                  <object data="img/test2.pdf" type="application/pdf" width="100%" height="95%"></object>
-
-
-
+                <object data="img/test2.pdf" type="application/pdf" width="100%" height="95%"></object>
                 </div>
             </div>
         </div>
@@ -204,4 +190,37 @@ function prevClick() {
   $( ".prev" ).trigger( "click" );
 }
 
+function save(){
+  alert("Save Click");
+  $('#save_btn').prop('disabled', true);
+  // you can access your videoInput object form here
+}
+
+function calibarate(){
+  alert("calibarate Click");
+  $('#save_btn').prop('disabled', false);
+  // you can access your videoInput object form here
+}
+
+</script>
+
+<script type="text/javascript">
+    var videoInput = document.getElementById('inputVideo');
+    var canvasInput = document.getElementById('inputCanvas');
+    var htracker = new headtrackr.Tracker({calcAngles : true});
+    htracker.init(videoInput, canvasInput);
+    htracker.start();
+
+
+    // video styling
+    // videoInput.style.position = 'absolute';
+    videoInput.style.top = '50px';
+    videoInput.style.zIndex = '100001';
+    videoInput.style.display = 'block';
+
+    document.addEventListener('facetrackingEvent',
+            function (event) {
+
+            }
+    );
 </script>
