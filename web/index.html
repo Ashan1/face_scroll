@@ -63,6 +63,10 @@
                       <button  class="btn btn-primary" id = "calibrate_btn" autocomplete="off" onclick="calibrate()" >
                         Calibrate
                       </button>
+                        <button  class="btn btn-primary" id = "scroll_btn"  autocomplete="off">
+                            Scroll
+                        </button>
+
                       <button  class="btn btn-primary" id = "save_btn"  autocomplete="off" onclick="save()" disabled>
                         Save
                       </button>
@@ -75,7 +79,7 @@
                         var debugOverlay = document.getElementById('debug');
                         var overlayContext = canvasOverlay.getContext('2d');
 
-                        var angle, initial_angle = 1.8;
+                        var angle, initial_x, initial_y, initial_angle = 1.8;
                         var detected;
                         var status = true;
                         var move = true;
@@ -91,7 +95,7 @@
 
 
                         // video styling
-                        videoInput.style.position = 'absolute';
+                        //videoInput.style.position = 'absolute';
                         videoInput.style.top = '50px';
                         videoInput.style.zIndex = '100001';
                         videoInput.style.display = 'block';
@@ -113,10 +117,11 @@
 
                                     if (htracker.status == "detecting"){
                                         initial_angle = event.angle;
+                                        initial_x = event.x;
+                                        initial_y = event.y;
                                     }
 
                                     angle = calc_angle(initial_angle, event.angle);
-                                    console.log(angle);
                                     if ((angle == "left") && (move == true)){
                                         prevClick();
                                         move = false;
@@ -134,9 +139,11 @@
                                         if (save_status == true){
                                             overlayContext.clearRect(0,0,320,240);
                                             calibrate_status = false;
+                                            initial_angle = event.angle;
+                                            initial_x = event.x;
+                                            initial_y = event.y;
                                         }
                                     }
-
                                 }
 
                         );
@@ -184,19 +191,19 @@
                         }
 
                         function calibrate(){
-                            alert("pressed");
                             $('#save_btn').prop('disabled', false);
                             save_status = false;
                             calibrate_status = true;
                             // you can access your videoInput object form here
                         }
 
+
                     </script>
 
                 </div>
-                <div class="col-xs-8 height-border" style="background-color: blue">FULL PDF
-                  <!-- <iframe  src="img/test2.pdf" frameborder="0" scrolling="auto" height="95%" width="100%" ></iframe> -->
-                <object data="img/test2.pdf" type="application/pdf" width="100%" height="95%"></object>
+                <div class="col-xs-8 height-border" style="background-color: blue" >FULL PDF
+                   <iframe  id="pdf_viewer" src="img/test2.pdf" frameborder="0" scrolling="auto" height="95%" width="100%" ></iframe>
+                <!--<object  data="img/test2.pdf" type="application/pdf" width="100%" height="95%"></object>-->
                 </div>
             </div>
         </div>
@@ -318,6 +325,17 @@ function nextClick(){
 function prevClick() {
   $( ".prev" ).trigger( "click" );
 }
+
+var scrolled = 0;
+
+$("#scroll_btn").on("click" ,function(){
+    alert('Hi');
+    scrolled=scrolled+300;
+    document.getElementById('pdf_viewer').contentWindow.scrollTo(0,500);
+
+
+});
+
 
 </script>
 
