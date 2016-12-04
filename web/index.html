@@ -50,8 +50,8 @@
     <div class="row top-container">
         <div class="col-xs-12 col-md-12 height-border" >
             <div class="row">
-                <div class="col-xs-4 height-border" style="background-color: yellow">
-                  <div class="height-border-half" style="background-color: red">
+                <div class="col-xs-4 height-border" >
+                  <div class="height-border-half" >
 
                     <div style="margin-top:5px;">
                         <canvas id="inputCanvas" width="320" height="240" style="display:none"></canvas>
@@ -84,7 +84,7 @@
 
 
                         // video styling
-                        //videoInput.style.position = 'absolute';
+                        videoInput.style.position = 'absolute';
                         videoInput.style.top = '50px';
                         videoInput.style.zIndex = '100001';
                         videoInput.style.display = 'block';
@@ -193,7 +193,7 @@
                     </script>
 
                   </div>
-                  <div class="height-border-half" style="background-color: green">
+                  <div class="height-border-half" >
                     <div class="row" >
                       <button  class="btn btn-primary" id = "calibrate_btn" autocomplete="off" onclick="calibrate()" >
                         Calibrate
@@ -202,10 +202,10 @@
                         Save
                       </button>
                     </div>
+                  </div>
                 </div>
 
-
-                <div class="col-xs-8 height-border" style="background-color: blue">FULL PDF
+                <div class="col-xs-8 height-border" >FULL PDF
                   <!-- <iframe  src="img/test2.pdf" frameborder="0" scrolling="auto" height="95%" width="100%" ></iframe> -->
                 <object id = "pdfView" data="img/test1.pdf" type="application/pdf" width="100%" height="95%"></object>
 
@@ -213,6 +213,7 @@
             </div>
         </div>
     </div>
+
 
     <div class="row bottom-container">
         <div class="col-xs-12 height-border" >
@@ -230,7 +231,7 @@
              </div>
         </div>
     </div>
-  </div>
+
 
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
