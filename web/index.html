@@ -52,28 +52,37 @@
             <div class="row">
                 <div class="col-xs-4 height-border" style="background-color: yellow">
 
-                <div style="margin-top:5px;">
-                    <canvas id="inputCanvas" width="320" height="240" style="display:none"></canvas>
-                    <video id="inputVideo" autoplay loop></video>
+                    <div style="margin-top:5px;">
+                        <canvas id="inputCanvas" width="320" height="240" style="display:none"></canvas>
+                        <video id="inputVideo" autoplay loop></video>
+                        <canvas id="overlay" width="320" height="240"></canvas>
+                        <canvas id="debug" width="320" height="240"></canvas>
 
-                </div>
-                <div class="row" style="margin-top:5px">
-                  <button  class="btn btn-primary" id = "calibarate_btn" autocomplete="off" onclick="calibarate()" >
-                    Calibarate
-                  </button>
-                  <button  class="btn btn-primary" id = "save_btn"  autocomplete="off" onclick="save()" disabled>
-                    Save
-                  </button>
-                </div>
+                    </div>
+                    <div class="row" style="margin-top:5px">
+                      <button  class="btn btn-primary" id = "calibrate_btn" autocomplete="off" onclick="calibrate()" >
+                        Calibrate
+                      </button>
+                      <button  class="btn btn-primary" id = "save_btn"  autocomplete="off" onclick="save()" disabled>
+                        Save
+                      </button>
+                    </div>
 
                     <script type="text/javascript">
                         var videoInput = document.getElementById('inputVideo');
                         var canvasInput = document.getElementById('inputCanvas');
+                        var canvasOverlay = document.getElementById('overlay');
+                        var debugOverlay = document.getElementById('debug');
+                        var overlayContext = canvasOverlay.getContext('2d');
 
                         var angle, initial_angle = 1.8;
                         var detected;
                         var status = true;
                         var move = true;
+
+                        // Keep the status of calibration
+                        var calibrate_status = false;
+                        var save_status = true;
 
 
                         var htracker = new headtrackr.Tracker({calcAngles : true});
@@ -86,6 +95,17 @@
                         videoInput.style.top = '50px';
                         videoInput.style.zIndex = '100001';
                         videoInput.style.display = 'block';
+
+                        canvasOverlay.style.position = "absolute";
+                        canvasOverlay.style.top = '0px';
+                        canvasOverlay.style.zIndex = '100001';
+                        canvasOverlay.style.display = 'block';
+
+                        debugOverlay.style.position = "absolute";
+                        debugOverlay.style.top = '0px';
+                        debugOverlay.style.zIndex = '100002';
+                        debugOverlay.style.display = 'none';
+
 
                         document.addEventListener('facetrackingEvent',
                                 function (event) {
@@ -108,24 +128,68 @@
                                     else if (angle == "steady"){
                                         move = true;
                                     }
+
+                                    if (calibrate_status == true){
+                                        draw_rect(event);
+                                        if (save_status == true){
+                                            overlayContext.clearRect(0,0,320,240);
+                                            calibrate_status = false;
+                                        }
+                                    }
+
                                 }
 
                         );
+
+                        function draw_rect(event) {
+                            overlayContext.clearRect(0,0,320,240);
+                            if (event.detection == "CS") {
+                                overlayContext.translate(event.x, event.y);
+                                overlayContext.rotate(event.angle-(Math.PI/2));
+                                overlayContext.strokeStyle = "#00CC00";
+                                overlayContext.strokeRect((-(event.width/2)) >> 0, (-(event.height/2)) >> 0, event.width, event.height);
+                                overlayContext.rotate((Math.PI/2)-event.angle);
+                                overlayContext.translate(-event.x, -event.y);
+                            }
+                        }
+
+                        // turn off or on the canvas showing probability
+                        function showProbabilityCanvas() {
+                            var debugCanvas = document.getElementById('debug');
+                            if (debugCanvas.style.display == 'none') {
+                                debugCanvas.style.display = 'block';
+                            } else {
+                                debugCanvas.style.display = 'none';
+                            }
+                        }
 
 
 
                         function calc_angle(init_value, current_value) {
                             var position = "steady";
-                            if ((init_value - current_value) > 0.5){
+                            if ((init_value - current_value) > 0.4){
                                 position = "right";
                             }
-                            else if ((init_value - current_value) < -0.5){
+                            else if ((init_value - current_value) < -0.4){
                                 position = "left";
                             }
 
                             return position;
                         }
 
+                        function save(){
+                            $('#save_btn').prop('disabled', true);
+                            save_status = true;
+                            // you can access your videoInput object form here
+                        }
+
+                        function calibrate(){
+                            alert("pressed");
+                            $('#save_btn').prop('disabled', false);
+                            save_status = false;
+                            calibrate_status = true;
+                            // you can access your videoInput object form here
+                        }
 
                     </script>
 
@@ -146,47 +210,47 @@
 
                          <li>
                              <article >
-                                 <a hreff="1"><img src="img/asdas.jpg" height="140" ></a>
-                             </article>
-                         </li>
-                         <li>
-                             <!-- <article > -->
-                                 <a hreff="1"><img src="img/asdas.jpg" height="140"  ></a>
+                                 <a href="1"><img src="img/asdas.jpg" height="140" ></a>
                              </article>
                          </li>
                          <li>
                              <article >
-                                 <a hreff="1"><img src="img/asdas.jpg" height="140" ></a>
+                                 <a href="1"><img src="img/asdas.jpg" height="140"  ></a>
                              </article>
                          </li>
                          <li>
                              <article >
-                                 <a hreff="1"><img src="img/asdas.jpg" height="140" ></a>
+                                 <a href="1"><img src="img/asdas.jpg" height="140" ></a>
                              </article>
                          </li>
                          <li>
                              <article >
-                                 <a hreff="1"><img src="img/asdas.jpg" height="140" ></a>
+                                 <a href="1"><img src="img/asdas.jpg" height="140" ></a>
                              </article>
                          </li>
                          <li>
                              <article >
-                                 <a hreff="1"><img src="img/asdas.jpg" height="140" ></a>
+                                 <a href="1"><img src="img/asdas.jpg" height="140" ></a>
                              </article>
                          </li>
                          <li>
                              <article >
-                                 <a hreff="1"><img src="img/asdas.jpg" height="140" ></a>
+                                 <a href="1"><img src="img/asdas.jpg" height="140" ></a>
                              </article>
                          </li>
                          <li>
                              <article >
-                                 <a hreff="1"><img src="img/asdas.jpg" height="140" ></a>
+                                 <a href="1"><img src="img/asdas.jpg" height="140" ></a>
                              </article>
                          </li>
                          <li>
                              <article >
-                                 <a hreff="1"><img src="img/asdas.jpg" height="140" ></a>
+                                 <a href="1"><img src="img/asdas.jpg" height="140" ></a>
+                             </article>
+                         </li>
+                         <li>
+                             <article >
+                                 <a href="1"><img src="img/asdas.jpg" height="140" ></a>
                              </article>
                          </li>
 
@@ -253,18 +317,6 @@ function nextClick(){
 
 function prevClick() {
   $( ".prev" ).trigger( "click" );
-}
-
-function save(){
-  alert("Save Click");
-  $('#save_btn').prop('disabled', true);
-  // you can access your videoInput object form here
-}
-
-function calibarate(){
-  alert("calibarate Click");
-  $('#save_btn').prop('disabled', false);
-  // you can access your videoInput object form here
 }
 
 </script>
