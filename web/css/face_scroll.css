@@ -26,3 +26,8 @@ html, body{
     text-align: center;
     height: 100%;
 }
+
+.height-border-half {
+    text-align: center;
+    height: 50%;
+}
