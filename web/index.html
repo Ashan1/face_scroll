@@ -65,20 +65,20 @@
                         var videoInput = document.getElementById('inputVideo');
                         var canvasInput = document.getElementById('inputCanvas');
                         var canvasOverlay = document.getElementById('overlay');
-                        var debugOverlay = document.getElementById('debug');
                         var overlayContext = canvasOverlay.getContext('2d');
 
-                        var angle, initial_x, initial_y, initial_angle = 1.8;
+                        var direction, side, initial_x, initial_y;
                         var detected;
                         var status = true;
                         var move = true;
+                        var initial = true;
 
                         // Keep the status of calibration
                         var calibrate_status = false;
                         var save_status = true;
 
 
-                        var htracker = new headtrackr.Tracker({calcAngles : true});
+                        var htracker = new headtrackr.Tracker();
                         htracker.init(videoInput, canvasInput);
                         htracker.start();
 
@@ -94,45 +94,60 @@
                         canvasOverlay.style.zIndex = '100001';
                         canvasOverlay.style.display = 'block';
 
-                        debugOverlay.style.position = "absolute";
-                        debugOverlay.style.top = '0px';
-                        debugOverlay.style.zIndex = '100002';
-                        debugOverlay.style.display = 'none';
+                        document.addEventListener('headtrackingEvent', function(event) {
+                            if (initial == true){
+                                initial_x = event.x;
+                                initial_y = event.y;
+                                initial = false;
+                            }
+
+                            if (calibrate_status == true){
+                                if (save_status == true){
+                                    overlayContext.clearRect(0,0,320,240);
+                                    calibrate_status = false;
+                                    initial_x = event.x;
+                                    initial_y = event.y;
+                                }
+                            }
+
+                            direction = calc_direction(initial_x, event.x);
+                            console.log(side);
+                            if ((direction == "left") && (move == true)){
+                                prevClick();
+                                move = false;
+                            }
+                            else if ((direction == "right") && (move == true)){
+                                nextClick();
+                                move = false;
+                            }
+                            else if (direction == "steady"){
+                                move = true;
+                            }
+
+                            side = calc_side(calc_side(initial_y, event.y));
+                        });
 
 
                         document.addEventListener('facetrackingEvent',
                                 function (event) {
 
-
-                                    if (htracker.status == "detecting"){
-                                        initial_angle = event.angle;
-                                        initial_x = event.x;
-                                        initial_y = event.y;
-                                    }
-
-                                    angle = calc_angle(initial_angle, event.angle);
-                                    if ((angle == "left") && (move == true)){
-                                        prevClick();
-                                        move = false;
-                                    }
-                                    else if ((angle == "right") && (move == true)){
-                                        nextClick();
-                                        move = false;
-                                    }
-                                    else if (angle == "steady"){
-                                        move = true;
-                                    }
-
                                     if (calibrate_status == true){
                                         draw_rect(event);
-                                        if (save_status == true){
-                                            overlayContext.clearRect(0,0,320,240);
-                                            calibrate_status = false;
-                                            initial_angle = event.angle;
-                                            initial_x = event.x;
-                                            initial_y = event.y;
-                                        }
                                     }
+
+                                    if (side == "down"){
+                                        move_down();
+                                        console.log("down");
+                                    }
+                                    else if (side == "up"){
+                                        move_up();
+                                        console.log("up");
+                                    }
+                                    else{
+                                        //console.log("steady");
+                                    }
+
+
                                 }
 
                         );
@@ -149,25 +164,27 @@
                             }
                         }
 
-                        // turn off or on the canvas showing probability
-                        function showProbabilityCanvas() {
-                            var debugCanvas = document.getElementById('debug');
-                            if (debugCanvas.style.display == 'none') {
-                                debugCanvas.style.display = 'block';
-                            } else {
-                                debugCanvas.style.display = 'none';
+                        function calc_side(init_y, current_y){
+                            var position = "steady";
+                            if ((init_y - current_y) > 2){
+                                position = "up";
                             }
+                            else if ((init_y - current_y) < -2){
+                                position = "down";
+                            }
+
+                            return position;
                         }
 
 
 
-                        function calc_angle(init_value, current_value) {
+                        function calc_direction(init_value, current_value) {
                             var position = "steady";
-                            if ((init_value - current_value) > 0.4){
-                                position = "right";
-                            }
-                            else if ((init_value - current_value) < -0.4){
+                            if ((init_value - current_value) > 2){
                                 position = "left";
+                            }
+                            else if ((init_value - current_value) < -2){
+                                position = "right";
                             }
 
                             return position;
@@ -175,7 +192,6 @@
 
                         function save(){
                             loadPdf();
-                            alert("Save pressed");
                             $('#save_btn').prop('disabled', true);
                             save_status = true;
                             // you can access your videoInput object form here
@@ -187,6 +203,8 @@
                             calibrate_status = true;
                             // you can access your videoInput object form here
                         }
+
+
 
 
 
@@ -205,9 +223,10 @@
                   </div>
                 </div>
 
-                <div class="col-xs-8 height-border" >FULL PDF
+                <div class="col-xs-8 height-border" style="overflow:scroll;" id="pdf_container">FULL PDF
+                    <!--<embed src="img/test2.pdf" width="100%" height="95%" type='application/pdf'>-->
                   <!-- <iframe  src="img/test2.pdf" frameborder="0" scrolling="auto" height="95%" width="100%" ></iframe> -->
-                <object id = "pdfView" data="img/test1.pdf" type="application/pdf" width="100%" height="95%"></object>
+                <object id = "pdfView" data="img/test1.pdf" type="application/pdf" width="100%" height=10000px></object>
 
                 </div>
             </div>
@@ -241,6 +260,7 @@
 
     <script src="js/plugin.js"></script>
     <script src="js/sly.min.js"></script>
+    </div>
   </body>
 </html>
 
@@ -289,28 +309,20 @@ function nextClick(){
   $( ".next" ).trigger( "click" );
   if (pdfIndex < pdfCount - 1) {
     pdfIndex += 1;
+      loadPdfByIndex(pdfIndex);
   }
-  loadPdfByIndex(pdfIndex);
+
 }
 
 function prevClick() {
   $( ".prev" ).trigger( "click" );
   if (pdfIndex > 0){
     pdfIndex -= 1;
+      loadPdfByIndex(pdfIndex);
+
   }
-  loadPdfByIndex(pdfIndex);
+
 }
-
-
-var scrolled = 0;
-
-$("#scroll_btn").on("click" ,function(){
-    alert('Hi');
-    scrolled=scrolled+300;
-    document.getElementById('pdf_viewer').contentWindow.scrollTo(0,500);
-
-
-});
 
 
 function loadPdf(name){
@@ -319,15 +331,30 @@ function loadPdf(name){
 
 function loadPdfByIndex(index){
   var name = pdfs[index].pdf;
-  console.log(name);
-  console.log(index);
   $('#pdfView').attr('data',"img/" + name);
+  scrolled = 0;
 }
 
 function setPdfs(){
   $.each( pdfs, function(i, l){
     $('.slidee').append('<li><article ><a ><img src="img/'+l.img +'" height="140" onclick = loadPdf("'+l.pdf+'") ></a></article></li>');});
      sly.init();
+}
+
+var scrolled=0;
+
+function move_down() {
+    scrolled=scrolled+300;
+    $("#pdf_container").animate({
+        scrollTop:  scrolled
+    });
+}
+
+function move_up() {
+    scrolled=scrolled-300;
+    $("#pdf_container").animate({
+        scrollTop:  scrolled
+    });
 }
 
 setPdfs();
